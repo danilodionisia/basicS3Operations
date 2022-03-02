@@ -3,6 +3,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
 const bodyParser = require('body-parser');
+const s3Config = require('./aws-config/s3-config');
 
 const port = process.env.PORT || 3000;
 
@@ -17,9 +18,16 @@ app.post('/uploads', async (req, res) => {
         
         const { files } = req.files;
 
-        
+        if (files) {
+            const s3Response = await s3Config.uploadToS3(files);
 
-        return res.status(200).json();
+            if (!s3Response) {
+                return res.status(500).json();
+            }
+
+            return res.status(200).json();
+        }
+        
     } catch (err) {
         console.error(err);
         return res.status(500).json()
