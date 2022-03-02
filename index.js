@@ -35,6 +35,26 @@ app.post('/uploads', async (req, res) => {
 });
 
 
+app.get('/objects/list', async (req, res) => {
+    try {
+
+        const objectsList = await s3Config.listObjectsFromS3();
+
+        if (!objectsList) {
+            return res.status(500).json();
+        }
+
+        return res.status(200).json({ objects: objectsList });
+        
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json();
+    }
+});
+
+
+
+
 app.listen(port, () => {
     console.log(`Server running on port: ${port}`);
 })
